@@ -102,25 +102,25 @@ cat <<EOF >> ${OMV_GIT_AUTHZ}
 EOF
 
 # Add permitted users and groups to each repo
-index=$(omv_config_get_count "//services/git/repos/repo")
-while [ ${index} -gt 0 ]
+repoindex=$(omv_config_get_count "//services/git/repos/repo")
+while [ ${repoindex} -gt 0 ]
 do
     #Get repo directory for ACL setting
-    reponame=$(omv_config_get "//services/git/repos/repo[position()=${index}]/name")
+    reponame=$(omv_config_get "//services/git/repos/repo[position()=${repoindex}]/name")
     repodir=$reporootdir/$reponame
     
 	echo '' >>${OMV_GIT_AUTHZ}
 
 	# Get the repository reference and path
-	reporef=$(omv_config_get "//services/git/repos/repo[position()=${index}]/uuid")
+	reporef=$(omv_config_get "//services/git/repos/repo[position()=${repoindex}]/uuid")
 
 	# Repo name	
-	xmlstarlet sel -t -m "//services/git/repos/repo[position()=${index}]" \
+	xmlstarlet sel -t -m "//services/git/repos/repo[position()=${repoindex}]" \
 	  -v "concat('[',name,':/]')" \
 	  ${OMV_CONFIG_FILE} | xmlstarlet unesc >> ${OMV_GIT_AUTHZ}
 
 	# Repo default privileges
-	dpriv=$(omv_config_get "//services/git/repos/repo[position()=${index}]/default-access")
+	dpriv=$(omv_config_get "//services/git/repos/repo[position()=${repoindex}]/default-access")
 
 	priv=''
 	case ${dpriv} in
@@ -241,7 +241,7 @@ do
             fi
         done
     fi
-	index=$(( ${index} - 1 ))
+    repoindex=$(( ${repoindex} - 1 ))
 done
 
 exit 0
